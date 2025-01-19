@@ -47,13 +47,6 @@ class DiscordClient(discord.Client):
                     player_name, message = data["player_name"], data["message"]
                     if "chat" in channels:
                         await channels["chat"].send(f"<{player_name}> {message}")
-                case "channel_topic":
-                    player_list = data["player_list"]
-                    if "chat" in channels and len(player_list) != self.num_players:
-                        self.num_players = len(player_list)
-                        await channels["chat"].edit(
-                            topic=f"Total players currently joined: {self.num_players}"
-                        )
                 case "death":
                     if "chat" in channels:
                         death_message = data["death_message"]
@@ -69,7 +62,6 @@ class DiscordClient(discord.Client):
                             color=discord.Color.red(),
                         )
                     await channels["chat"].send(embed=embed)
-                    await channels["chat"].edit(topic="Server offline.")
                     await self.close()
 
     async def on_ready(self) -> None:
@@ -83,7 +75,6 @@ class DiscordClient(discord.Client):
                 color=discord.Color.green(),
             )
             await channels["chat"].send(embed=embed)
-            await channels["chat"].edit(topic="Total player currently joined: 0")
         self.main_loop.start(channels)
 
     async def on_message(self, message: discord.Message) -> None:
